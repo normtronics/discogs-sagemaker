@@ -12,3 +12,7 @@ aiofiles==24.1.0
 numpy==2.1.0
 scikit-learn==1.5.2
 
+# SageMaker dependencies
+boto3>=1.35.0
+sagemaker>=2.200.0,<3.0.0  # Version 3.x removed sagemaker.pytorch
+aiohttp>=3.8.0

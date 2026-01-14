@@ -26,6 +26,11 @@ discogs-sage-app/
 │   └── src/
 │       └── app/
 │           └── page.tsx     # Main upload interface
+├── sagemaker/        # AWS SageMaker deployment
+│   ├── train.py             # SageMaker training script
+│   ├── inference.py         # SageMaker inference handler
+│   ├── deploy.py            # Deployment automation
+│   └── README.md            # SageMaker documentation
 └── data/            # Data files
     └── releases_manifest_50.jsonl  # First 50 releases
 ```
@@ -148,9 +153,12 @@ This trains a ResNet50 model using transfer learning on the downloaded images. T
 ## Environment Variables
 
 ### Backend (.env.local)
-- `DISCOGS_API_TOKEN`: Your Discogs API token
+- `DISCOGS_CONSUMER_KEY`: Your Discogs consumer key
+- `DISCOGS_CONSUMER_SECRET`: Your Discogs consumer secret
 - `MODEL_PATH`: Path to trained model (default: `./models/album_classifier.pth`)
 - `IMAGES_PATH`: Path to album images (default: `./data/images`)
+- `BUCKET_NAME`: S3 bucket for SageMaker
+- `SAGEMAKER_ROLE`: IAM role ARN for SageMaker
 
 ### Frontend (.env.local)
 - `NEXT_PUBLIC_API_URL`: Backend API URL (default: `http://localhost:8000`)
@@ -175,13 +183,39 @@ npm run dev
 curl -X POST -F "file=@album_cover.jpg" http://localhost:8000/api/predict
 ```
 
+## AWS SageMaker Deployment
+
+This project includes full AWS SageMaker support for production deployment.
+
+### Quick Start
+
+```bash
+# 1. Upload data to S3
+python sagemaker/upload_data_s3.py
+
+# 2. Train on SageMaker
+python sagemaker/deploy.py --instance-type ml.p3.2xlarge --epochs 10
+
+# 3. Test endpoint
+python sagemaker/test_endpoint.py --endpoint discogs-sage-classifier --image test.jpg
+```
+
+### Documentation
+
+- **[AWS Setup Guide](AWS_SETUP.md)** - Complete AWS configuration walkthrough
+- **[AWS Credentials Guide](AWS_CREDENTIALS.md)** - Managing multiple AWS accounts
+- **[AWS Jobs Guide](AWS_JOBS.md)** - Automated & scheduled training jobs
+- **[AWS Workflow](AWS_WORKFLOW.md)** - Daily operational workflows
+- **[Quick Start Guide](SAGEMAKER_QUICKSTART.md)** - Get started in 5 minutes
+- **[Full Documentation](sagemaker/README.md)** - Complete SageMaker guide
+
 ## Future Enhancements
 
 - [ ] Expand to full Discogs catalog
 - [ ] Add batch prediction support
 - [ ] Implement image similarity search
 - [ ] Add user feedback for model improvement
-- [ ] Deploy to AWS SageMaker for production
+- [x] Deploy to AWS SageMaker for production
 - [ ] Add caching for faster predictions
 - [ ] Support for multi-image input
 

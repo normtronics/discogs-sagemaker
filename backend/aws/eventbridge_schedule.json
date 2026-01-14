@@ -1,0 +1,15 @@
+{
+  "description": "Trigger SageMaker training job weekly",
+  "scheduleExpression": "cron(0 2 ? * MON *)",
+  "target": {
+    "arn": "arn:aws:lambda:REGION:ACCOUNT_ID:function:trigger-album-classifier-training",
+    "input": {
+      "instance_type": "ml.p3.2xlarge",
+      "epochs": 10,
+      "batch_size": 16,
+      "learning_rate": 0.001
+    }
+  },
+  "state": "ENABLED"
+}
+

@@ -51,10 +51,20 @@ def create_datasets(images_dir: str, releases: List[Dict]):
     
     print(f"Found {len(image_paths)} images")
     
+    # Check if we can use stratified split (need at least 2 samples per class)
+    from collections import Counter
+    label_counts = Counter(labels)
+    min_samples = min(label_counts.values())
+    can_stratify = min_samples >= 2
+    
+    if not can_stratify:
+        print(f"Warning: Some classes have only 1 sample, using non-stratified split")
+    
     # Split into train and validation (use smaller test size for small datasets)
     test_size = min(0.2, max(0.1, len(image_paths) * 0.15 / len(image_paths)))
     train_paths, val_paths, train_labels, val_labels = train_test_split(
-        image_paths, labels, test_size=test_size, random_state=42
+        image_paths, labels, test_size=test_size, random_state=42,
+        stratify=labels if can_stratify else None
     )
     
     # Data augmentation for training
@@ -207,8 +217,25 @@ def train_model(images_dir: str, releases: List[Dict], model_path: str, epochs: 
 if __name__ == "__main__":
     # For standalone testing
     from data_loader import load_releases_data
+    import os
     
-    releases = load_releases_data("../data/releases_manifest_50.jsonl")
+    # Try multiple manifest paths
+    possible_manifests = [
+        "../data/releases_manifest_enriched.jsonl",
+    
+    ]
+    
+    releases = None
+    for manifest_path in possible_manifests:
+        if os.path.exists(manifest_path):
+            releases = load_releases_data(manifest_path)
+            print(f"Loaded {len(releases)} releases from {manifest_path}")
+            break
+    
+    if not releases:
+        print("Error: No manifest file found")
+        sys.exit(1)
+    
     results = train_model("./data/images", releases, "./models/album_classifier.pth", epochs=5)
     print(f"\nTraining results: {results}")
 

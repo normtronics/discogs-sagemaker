@@ -12,7 +12,9 @@ from pathlib import Path
 from model_service import AlbumClassifier
 from data_loader import load_releases_data
 
-load_dotenv()
+# Load .env.local file (falls back to .env if not found)
+load_dotenv('.env.local')
+load_dotenv()  # Fallback to .env
 
 app = FastAPI(title="Album Recognition API")
 
@@ -43,8 +45,27 @@ async def startup_event():
     model_path = os.getenv("MODEL_PATH", "./models/album_classifier.pth")
     images_path = os.getenv("IMAGES_PATH", "./data/images")
     
-    # Load releases data
-    releases_data = load_releases_data("../data/releases_manifest_50.jsonl")
+    # Load releases data - try multiple possible paths
+    possible_manifests = [
+        "../data/releases_manifest_enriched.jsonl",
+        "../data/releases_manifest.jsonl",
+        "../data/releases_metadata.jsonl",
+        "../data/releases_manifest_50.jsonl",
+    ]
+    
+    releases_data = None
+    for manifest_path in possible_manifests:
+        try:
+            if os.path.exists(manifest_path):
+                releases_data = load_releases_data(manifest_path)
+                print(f"Loaded {len(releases_data)} releases from {manifest_path}")
+                break
+        except:
+            continue
+    
+    if not releases_data:
+        print("Warning: No manifest file found, using empty dataset")
+        releases_data = []
     
     # Initialize classifier
     classifier = AlbumClassifier(
