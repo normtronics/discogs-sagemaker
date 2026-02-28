@@ -212,5 +212,9 @@ python sagemaker/test_endpoint.py --endpoint discogs-sage-classifier --image tes
 
 ## License
 
+python scripts/build_data.py --count 10000
+python scripts/download_images.py --manifest ./data/releases_manifest.jsonl --images-dir ./data/images
+python -m scripts.train --data-dir ../data --model-dir models
+
 MIT
 
