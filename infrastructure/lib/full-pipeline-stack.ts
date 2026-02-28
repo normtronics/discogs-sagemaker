@@ -75,7 +75,7 @@ export class FullPipelineStack extends cdk.Stack {
     this.lambdaFunction = new lambda.Function(this, 'TriggerFullPipelineFunction', {
       runtime: lambda.Runtime.PYTHON_3_11,
       handler: 'lambda_function.lambda_handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '../../backend/aws')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '../lambda-training')),
       role: lambdaRole,
       timeout: cdk.Duration.minutes(15),
       memorySize: 512,

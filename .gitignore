@@ -16,6 +16,9 @@ __pycache__/
 
 # Model files
 backend/models/
+
+# Data (manifests, images)
+data/
 backend/data/images/
 *.pth
 
@@ -36,4 +39,5 @@ npm-debug.log*
 # Testing
 coverage/
 .pytest_cache/
+
 
