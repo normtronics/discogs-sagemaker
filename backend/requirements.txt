@@ -1,9 +1,13 @@
+# PyTorch: use their index (PyPI often has no wheels for some platforms)
+# For GPU/CUDA, replace "cpu" with e.g. "cu121" - see https://pytorch.org/get-started/locally/
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.0.0,<3.0.0
+torchvision>=0.15.0,<1.0.0
+
 fastapi==0.115.0
 uvicorn==0.32.0
 python-multipart==0.0.12
 pillow==11.0.0
-torch>=2.0.0,<3.0.0
-torchvision>=0.15.0,<1.0.0
 requests==2.32.3
 requests-oauthlib==2.0.0
 python-dotenv==1.0.1
