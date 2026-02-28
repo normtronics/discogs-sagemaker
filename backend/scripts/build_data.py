@@ -114,15 +114,19 @@ def main():
 
     # Step 3: Enrich with image URLs via Discogs API (XML dump has no images)
     if not args.skip_enrich:
+        user_token = os.environ.get("DISCOGS_USER_TOKEN")
         key = os.environ.get("DISCOGS_CONSUMER_KEY")
         secret = os.environ.get("DISCOGS_CONSUMER_SECRET")
-        if key and secret:
+        if user_token or (key and secret):
             import asyncio
             checkpoint = str(Path(manifest_path).parent / "enrich_checkpoint.json")
-            asyncio.run(enrich_manifest(str(manifest_path), str(manifest_path), key, secret, checkpoint))
+            asyncio.run(enrich_manifest(
+                str(manifest_path), str(manifest_path), key or "", secret or "", checkpoint,
+                user_token=user_token,
+            ))
         else:
-            print("\n⚠ Skipping enrich: set DISCOGS_CONSUMER_KEY and DISCOGS_CONSUMER_SECRET")
-            print("  Get keys at https://www.discogs.com/settings/developers")
+            print("\n⚠ Skipping enrich: set DISCOGS_USER_TOKEN or DISCOGS_CONSUMER_KEY + DISCOGS_CONSUMER_SECRET")
+            print("  User token: https://www.discogs.com/settings/developers → Generate new token")
 
     # Step 4: Download images (only for releases with cover_image)
     if not args.skip_download_images:

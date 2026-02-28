@@ -28,10 +28,16 @@ def main():
     parser.add_argument("--checkpoint", default="data/enrich_checkpoint.json", help="Checkpoint file for resume")
     args = parser.parse_args()
 
+    user_token = os.environ.get("DISCOGS_USER_TOKEN")
     key = os.environ.get("DISCOGS_CONSUMER_KEY")
     secret = os.environ.get("DISCOGS_CONSUMER_SECRET")
-    if not key or not secret:
-        print("Error: DISCOGS_CONSUMER_KEY and DISCOGS_CONSUMER_SECRET not set")
+
+    if user_token:
+        key = secret = ""  # Not needed when using user_token
+    elif not key or not secret:
+        print("Error: Set DISCOGS_USER_TOKEN (preferred) or DISCOGS_CONSUMER_KEY + DISCOGS_CONSUMER_SECRET")
+        print("  User token: https://www.discogs.com/settings/developers → Generate new token")
+        print("  Key/secret: https://www.discogs.com/settings/developers → Create an application")
         sys.exit(1)
 
     project_root = Path(__file__).resolve().parent.parent.parent
@@ -56,6 +62,7 @@ def main():
             key,
             secret,
             str(checkpoint_path),
+            user_token=user_token,
         )
     )
 

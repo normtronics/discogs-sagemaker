@@ -65,4 +65,5 @@ python main.py
 ## Environment
 
 - `MODEL_PATH` - Model directory (default: models)
-- `DISCOGS_*` - Not needed for XML dump (images come from XML)
+- `DISCOGS_USER_TOKEN` - (Preferred) Personal token for enrich step. From [Discogs Developers](https://www.discogs.com/settings/developers) → Generate new token. Uses [python3-discogs-client](https://github.com/joalla/discogs_client).
+- `DISCOGS_CONSUMER_KEY` + `DISCOGS_CONSUMER_SECRET` - Alternative for enrich (aiohttp fallback)

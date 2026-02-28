@@ -76,10 +76,11 @@ async def get_releases():
 @app.post("/api/enrich-manifest")
 async def enrich_manifest_endpoint():
     """Fetch image URLs from Discogs API and update manifest."""
+    user_token = os.getenv("DISCOGS_USER_TOKEN")
     key = os.getenv("DISCOGS_CONSUMER_KEY")
     secret = os.getenv("DISCOGS_CONSUMER_SECRET")
-    if not key or not secret:
-        raise HTTPException(400, "Set DISCOGS_CONSUMER_KEY and DISCOGS_CONSUMER_SECRET")
+    if not user_token and (not key or not secret):
+        raise HTTPException(400, "Set DISCOGS_USER_TOKEN or DISCOGS_CONSUMER_KEY + DISCOGS_CONSUMER_SECRET")
 
     project_root = Path(__file__).resolve().parent.parent
     manifest_path = str(project_root / "data" / "releases_manifest.jsonl")
@@ -88,7 +89,10 @@ async def enrich_manifest_endpoint():
 
     try:
         checkpoint_path = str(Path(manifest_path).parent / "enrich_checkpoint.json")
-        with_images = await enrich_manifest(manifest_path, manifest_path, key, secret, checkpoint_path)
+        with_images = await enrich_manifest(
+            manifest_path, manifest_path, key or "", secret or "", checkpoint_path,
+            user_token=user_token,
+        )
         return {"success": True, "releases_with_images": with_images}
     except Exception as e:
         raise HTTPException(500, str(e))

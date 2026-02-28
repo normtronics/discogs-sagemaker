@@ -18,7 +18,7 @@ __pycache__/
 backend/models/
 
 # Data (manifests, images)
-data/
+
 backend/data/images/
 *.pth
 

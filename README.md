@@ -30,6 +30,39 @@ discogs-sage-app/
 
 ## Setup
 
+### Prerequisites: Python via pyenv
+
+This project requires Python 3.10+ (for PyTorch). Using [pyenv](https://github.com/pyenv/pyenv) lets you install and switch Python versions easily.
+
+**Install pyenv**
+
+- **macOS (Homebrew):**
+  ```bash
+  brew install pyenv
+  ```
+  Add to `~/.zshrc` (or `~/.bash_profile`):
+  ```bash
+  export PYENV_ROOT="$HOME/.pyenv"
+  [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init -)"
+  ```
+  Then run `exec "$SHELL"` or open a new terminal.
+
+- **Linux (Ubuntu/Debian):**
+  ```bash
+  curl https://pyenv.run | bash
+  ```
+  Add the same three lines above to `~/.bashrc`, then `exec "$SHELL"`.
+
+**Install and use Python 3.11**
+
+```bash
+pyenv install 3.11.9
+pyenv local 3.11.9   # Use 3.11 for this project
+```
+
+Verify: `python --version` should show 3.11.9.
+
 ### Backend
 
 1. Navigate to backend directory:
@@ -37,7 +70,7 @@ discogs-sage-app/
 cd backend
 ```
 
-2. Create virtual environment:
+2. Create virtual environment (uses Python from pyenv if set):
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -144,8 +177,8 @@ This trains a ResNet50 model using transfer learning on the downloaded images. T
 ## Environment Variables
 
 ### Backend (.env.local)
-- `DISCOGS_CONSUMER_KEY`: Your Discogs consumer key
-- `DISCOGS_CONSUMER_SECRET`: Your Discogs consumer secret
+- `DISCOGS_USER_TOKEN`: (Preferred) Personal access token from [Discogs Developers](https://www.discogs.com/settings/developers) → Generate new token. Uses [python3-discogs-client](https://github.com/joalla/discogs_client).
+- `DISCOGS_CONSUMER_KEY` + `DISCOGS_CONSUMER_SECRET`: Alternative auth from Create an application
 - `MODEL_PATH`: Path to trained model (default: `./models/album_classifier.pth`)
 - `IMAGES_PATH`: Path to album images (default: `./data/images`)
 - `BUCKET_NAME`: S3 bucket for SageMaker
@@ -212,9 +245,9 @@ python sagemaker/test_endpoint.py --endpoint discogs-sage-classifier --image tes
 
 ## License
 
-python scripts/build_data.py --count 10000
-python scripts/download_images.py --manifest ./data/releases_manifest.jsonl --images-dir ./data/images
-python -m scripts.train --data-dir ../data --model-dir models
+DISCOGS_CONSUMER_KEY=pHsfgCGpbVGIeSFQMRKS
+DISCOGS_CONSUMER_SECRET=JoVnKxMgKLpEYHxiIftqewThyZDwiiBo
+DISCOGS_USER_TOKEN=VHHoqKOVTjPNgUqhPwVKnZXMSMYJWebaOoTWTEjE
 
 MIT
 
