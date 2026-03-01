@@ -18,6 +18,9 @@ def main():
     parser.add_argument("--concurrent", type=int, default=5, help="Concurrent downloads (default 5)")
     parser.add_argument("--delay", type=float, default=0.2, help="Delay between requests in seconds (default 0.2)")
     parser.add_argument("--retries", type=int, default=3, help="Max retries per image (default 3)")
+    parser.add_argument("--use-requests", action="store_true",
+        help="Use requests lib instead of aiohttp (fixes SSL/proxy when curl works but Python fails)")
+    parser.add_argument("--no-verify-ssl", action="store_true", help="Disable SSL verification (debug only)")
     parser.add_argument("-v", "--verbose", action="store_true", help="Log failed downloads")
     args = parser.parse_args()
 
@@ -33,12 +36,19 @@ def main():
 
     print(f"Manifest: {manifest_path}")
     print(f"Images: {images_dir}")
-    print(f"Concurrent: {args.concurrent}, delay: {args.delay}s, retries: {args.retries}\n")
+    print(f"Concurrent: {args.concurrent}, delay: {args.delay}s, retries: {args.retries}")
+    if args.use_requests:
+        print("Using requests lib (aiohttp fallback)")
+    if args.no_verify_ssl:
+        print("WARNING: SSL verification disabled")
+    print()
     stats = asyncio.run(download_all(
         str(manifest_path), str(images_dir),
         max_concurrent=args.concurrent,
         request_delay=args.delay,
         max_retries=args.retries,
+        use_requests=args.use_requests,
+        verify_ssl=not args.no_verify_ssl,
     ))
     print(f"\nDone: downloaded={stats['downloaded']}, failed={stats['failed']}, skipped={stats['skipped']}")
 
