@@ -1,5 +1,5 @@
-# PyTorch: use their index (has wheels for Intel Mac + Apple Silicon)
-# Same requirements.txt works on both; pip picks x86_64 or arm64 wheel per machine
+# PyTorch: install from their index (has wheels for Intel Mac + Apple Silicon)
+# If "No matching distribution" error, run first: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch>=2.0.0,<3.0.0
 torchvision>=0.15.0,<1.0.0

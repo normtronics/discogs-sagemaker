@@ -23,6 +23,11 @@ source venv/bin/activate
 # Install requirements
 echo "Installing dependencies..."
 pip install --upgrade pip
+
+# Install PyTorch first (fixes "No matching distribution" on some systems)
+echo "Installing PyTorch..."
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu || true
+
 pip install -r requirements.txt
 
 # Create necessary directories
