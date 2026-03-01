@@ -76,10 +76,18 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
+
 3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
+
+   **If you get "No matching distribution found for torch"**, install PyTorch first:
+   ```bash
+   pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+   pip install -r requirements.txt
+   ```
+   Or run `./setup.sh` which installs PyTorch before other deps.
 
 4. Build data and train (see [docs/backend.md](docs/backend.md)):
 ```bash
