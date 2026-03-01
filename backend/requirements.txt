@@ -25,8 +25,8 @@ python-dotenv>=1.0.1
 pydantic>=2.10.0,<3.0.0
 aiofiles>=24.1.0
 
-# ML (numpy range for PyTorch/scikit-learn compatibility)
-numpy>=1.26.0,<3.0.0
+# ML (numpy<2 for PyTorch compatibility; 2.x can cause "compiled with NumPy 1.x" crash)
+numpy>=1.26.0,<2.0.0
 scikit-learn>=1.5.0,<2.0.0
 
 # SageMaker dependencies

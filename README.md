@@ -195,6 +195,26 @@ This trains a ResNet50 model using transfer learning on the downloaded images. T
 ### Frontend (.env.local)
 - `NEXT_PUBLIC_API_URL`: Backend API URL (default: `http://localhost:8000`)
 
+## Troubleshooting
+
+**NumPy "compiled with NumPy 1.x" error** – Downgrade: `pip install "numpy<2"`
+
+**SSL certificate verify failed** (when downloading ResNet50 weights on macOS):
+```bash
+# Option 1: Run Python's certificate installer (if using python.org installer)
+/Applications/Python\ 3.11/Install\ Certificates.command
+
+# Option 2: Use certifi (if using pyenv)
+export SSL_CERT_FILE=$(python -c "import certifi; print(certifi.where())")
+
+# Option 3: Install certs for pyenv Python
+pip install certifi
+python -m certifi
+# Then: export SSL_CERT_FILE=/path/from/certifi/output
+```
+
+**No matching distribution for torch** – See step 3 in Backend setup above.
+
 ## Development
 
 ### Backend Development
