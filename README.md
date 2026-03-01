@@ -215,6 +215,12 @@ python -m certifi
 
 **No matching distribution for torch** – See step 3 in Backend setup above.
 
+**DNS/network error when downloading ResNet50** (`nodename nor servname provided, or not known`):
+1. On a machine with internet, run: `python backend/scripts/download_resnet50_weights.py`
+2. Copy the file to your offline machine at `~/.cache/torch/hub/checkpoints/resnet50-0676ba61.pth`
+3. Or download from https://download.pytorch.org/models/resnet50-0676ba61.pth and set:
+   `export RESNET50_WEIGHTS_PATH=/path/to/resnet50-0676ba61.pth`
+
 ## Development
 
 ### Backend Development
