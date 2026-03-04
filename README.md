@@ -248,24 +248,22 @@ This project includes full AWS SageMaker support for production deployment.
 ### Quick Start
 
 ```bash
-# 1. Upload data to S3
-python sagemaker/upload_data_s3.py
+# 1. Upload data and code to S3
+./prepare_for_studio.sh your-bucket-name
 
-# 2. Train on SageMaker
-python sagemaker/deploy.py --instance-type ml.p3.2xlarge --epochs 10
+# 2. Train on SageMaker (from Studio notebook or CLI)
+# See docs/SAGEMAKER_README.md
 
-# 3. Test endpoint
-python sagemaker/test_endpoint.py --endpoint discogs-sage-classifier --image test.jpg
+# 3. Deploy API Gateway + Lambda
+cd infrastructure && npm run deploy -- --context endpointName=album-classifier
 ```
 
 ### Documentation
 
-- **[AWS Setup Guide](AWS_SETUP.md)** - Complete AWS configuration walkthrough
-- **[AWS Credentials Guide](AWS_CREDENTIALS.md)** - Managing multiple AWS accounts
-- **[AWS Jobs Guide](AWS_JOBS.md)** - Automated & scheduled training jobs
-- **[AWS Workflow](AWS_WORKFLOW.md)** - Daily operational workflows
-- **[Quick Start Guide](SAGEMAKER_QUICKSTART.md)** - Get started in 5 minutes
-- **[Full Documentation](sagemaker/README.md)** - Complete SageMaker guide
+- **[How SageMaker Works](docs/SAGEMAKER_README.md)** - Architecture, flow, key files
+- **[SageMaker Quick Start](docs/SAGEMAKER_QUICK_START.md)** - 5-step reference
+- **[Complete Setup](docs/SAGEMAKER_COMPLETE_SETUP.md)** - Full walkthrough
+- **[Deploy Inference](docs/DEPLOY_INFERENCE.md)** - API Gateway + Lambda
 
 ## Future Enhancements
 
@@ -278,10 +276,6 @@ python sagemaker/test_endpoint.py --endpoint discogs-sage-classifier --image tes
 - [ ] Support for multi-image input
 
 ## License
-
-DISCOGS_CONSUMER_KEY=pHsfgCGpbVGIeSFQMRKS
-DISCOGS_CONSUMER_SECRET=JoVnKxMgKLpEYHxiIftqewThyZDwiiBo
-DISCOGS_USER_TOKEN=VHHoqKOVTjPNgUqhPwVKnZXMSMYJWebaOoTWTEjE
 
 MIT
 

@@ -3,6 +3,7 @@
 | Doc | Description |
 |-----|-------------|
 | [backend.md](backend.md) | Backend structure, build data, train, serve |
+| [SAGEMAKER_README.md](SAGEMAKER_README.md) | **How SageMaker works** – architecture, flow, key files |
 | [SAGEMAKER_COMPLETE_SETUP.md](SAGEMAKER_COMPLETE_SETUP.md) | Full SageMaker setup guide |
 | [SAGEMAKER_QUICK_START.md](SAGEMAKER_QUICK_START.md) | Quick SageMaker reference |
 | [STUDIO_WALKTHROUGH.md](STUDIO_WALKTHROUGH.md) | SageMaker Studio walkthrough |

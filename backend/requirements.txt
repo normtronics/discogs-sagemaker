@@ -29,6 +29,9 @@ aiofiles>=24.1.0
 numpy>=1.26.0,<2.0.0
 scikit-learn>=1.5.0,<2.0.0
 
+# Hugging Face (for push_to_huggingface.py)
+huggingface_hub>=0.20.0
+
 # SageMaker dependencies
 boto3>=1.35.0
 sagemaker>=2.200.0,<3.0.0  # Version 3.x removed sagemaker.pytorch
