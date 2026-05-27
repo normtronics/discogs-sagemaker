@@ -31,8 +31,14 @@ def model_fn(model_dir: str):
     with open(os.path.join(model_dir, "metadata.json")) as f:
         meta = json.load(f)
 
-    model = create_model(meta["num_classes"])
-    model.load_state_dict(torch.load(os.path.join(model_dir, "model.pth"), map_location=device))
+    # Do not download ImageNet weights at inference — load trained checkpoint only
+    model = create_model(meta["num_classes"], load_pretrained=False)
+    weights_path = os.path.join(model_dir, "model.pth")
+    try:
+        state = torch.load(weights_path, map_location=device, weights_only=True)
+    except TypeError:
+        state = torch.load(weights_path, map_location=device)
+    model.load_state_dict(state)
     model.to(device).eval()
 
     return {"model": model, "metadata": meta, "device": device}

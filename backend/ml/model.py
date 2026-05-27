@@ -8,6 +8,14 @@ RESNET50_FILENAME = "resnet50-0676ba61.pth"
 RESNET50_URL = "https://download.pytorch.org/models/resnet50-0676ba61.pth"
 
 
+def _torch_load(path: str, map_location="cpu"):
+    """Load checkpoint; weights_only when supported (PyTorch 2.0+)."""
+    try:
+        return torch.load(path, map_location=map_location, weights_only=True)
+    except TypeError:
+        return torch.load(path, map_location=map_location)
+
+
 def _load_pretrained_weights(model: nn.Module) -> None:
     """Load ImageNet pretrained weights from local file or download."""
     import os as _os
@@ -19,7 +27,7 @@ def _load_pretrained_weights(model: nn.Module) -> None:
         local_path = _os.path.join(cache_dir, "checkpoints", RESNET50_FILENAME)
 
     if _os.path.exists(local_path):
-        state_dict = torch.load(local_path, map_location="cpu", weights_only=True)
+        state_dict = _torch_load(local_path, map_location="cpu")
         # Remove fc layer (we replace it); load rest with strict=False
         state_dict.pop("fc.weight", None)
         state_dict.pop("fc.bias", None)
@@ -33,10 +41,11 @@ def _load_pretrained_weights(model: nn.Module) -> None:
     )
 
 
-def create_model(num_classes: int, dropout: float = 0.4):
+def create_model(num_classes: int, dropout: float = 0.4, load_pretrained: bool = True):
     """Create ResNet50 for album classification."""
     model = models.resnet50(weights=None)
-    _load_pretrained_weights(model)
+    if load_pretrained:
+        _load_pretrained_weights(model)
 
     # Freeze early layers; unfreeze layer4 and fc for fine-tuning
     for name, param in model.named_parameters():
