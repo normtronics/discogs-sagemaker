@@ -80,11 +80,17 @@ def main():
         default=10,
         help="Concurrent image downloads",
     )
+    parser.add_argument(
+        "--project-root",
+        type=str,
+        default=None,
+        help="Repo root for data paths (default: auto-detect)",
+    )
 
     args = parser.parse_args()
 
     # Resolve paths relative to project root
-    project_root = Path(__file__).resolve().parent.parent.parent
+    project_root = Path(args.project_root) if args.project_root else Path(__file__).resolve().parent.parent.parent
     dump_path = project_root / args.dump_file
     manifest_path = project_root / args.manifest
     images_dir = project_root / args.images_dir
