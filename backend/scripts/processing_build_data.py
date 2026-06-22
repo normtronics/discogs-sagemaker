@@ -19,6 +19,50 @@ from botocore.exceptions import ClientError
 
 WORK_ROOT = Path("/opt/ml/processing/work")
 OUTPUT_ROOT = Path("/opt/ml/processing/output")
+BACKEND_EXTRACT = WORK_ROOT / "backend"
+
+
+def _extract_backend(tar_path: Path) -> Path:
+    """Extract backend tarball uploaded via ProcessingInput."""
+    import tarfile
+    import shutil
+
+    if BACKEND_EXTRACT.exists():
+        shutil.rmtree(BACKEND_EXTRACT)
+    BACKEND_EXTRACT.mkdir(parents=True, exist_ok=True)
+    with tarfile.open(tar_path, "r:gz") as tar:
+        tar.extractall(WORK_ROOT)
+    if not (BACKEND_EXTRACT / "scripts" / "build_data.py").exists():
+        raise FileNotFoundError(f"Invalid backend tar: {tar_path}")
+    print(f"✓ Extracted backend to {BACKEND_EXTRACT}")
+    return BACKEND_EXTRACT
+
+
+def _find_backend_tar() -> Path:
+    """Locate backend tarball from ProcessingInput mount."""
+    candidates = [
+        Path("/opt/ml/processing/input/backend_pkg/processing_backend.tar.gz"),
+        Path("/opt/ml/processing/input/backend_pkg"),
+    ]
+    for c in candidates:
+        if c.is_file():
+            return c
+        if c.is_dir():
+            for f in c.glob("*.tar.gz"):
+                return f
+    raise FileNotFoundError(
+        "Backend tarball not found. Notebook must upload code/processing_backend.tar.gz "
+        "and pass it as a ProcessingInput."
+    )
+
+
+def _pip_install(backend_dir: Path) -> None:
+    req = backend_dir / "requirements-processing.txt"
+    if req.exists():
+        subprocess.run(
+            [sys.executable, "-m", "pip", "install", "-q", "-r", str(req)],
+            check=True,
+        )
 
 
 def _s3_key(prefix: str, name: str) -> str:
@@ -117,7 +161,8 @@ def main() -> None:
         raise RuntimeError("Set DISCOGS_USER_TOKEN in the processing job environment")
 
     WORK_ROOT.mkdir(parents=True, exist_ok=True)
-    backend_dir = Path(__file__).resolve().parent.parent
+    backend_dir = _extract_backend(_find_backend_tar())
+    _pip_install(backend_dir)
     s3 = boto3.client("s3", region_name=args.region)
 
     _sync_from_s3(s3, args.s3_bucket, args.s3_prefix, WORK_ROOT)
